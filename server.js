@@ -1,10 +1,17 @@
 #!/bin/env node
 // WebSocket example based on template:
 //  OpenShift sample Node application
+var server = require('http').createServer()
 var express  = require('express');
 var fs       = require('fs');
 var swig     = require('swig');
+var app      = express();
+var url	     = require('url')
 
+var WebSocketServer = require("ws").Server
+var wss = new WebSocketServer({ server: server })
+
+console.log('URL: '+url.parse('http://www.linux.cz'));
 
 /**
  *  Define the sample application.
@@ -85,7 +92,7 @@ var WebSocketApp = function() {
      *  the handlers.
      */
     self.initializeServer = function() {
-        self.app = express();
+        self.app = app;
 	self.app.use ( express.static('public') );
         // console.log('swig '+JSON.stringify(swig,null,4));
         self.app.engine('swig', swig.renderFile);
@@ -95,12 +102,34 @@ var WebSocketApp = function() {
 		res.render('index', {
 			cfg: self.cfg,
 			title: 'WebSockets sample  '+new Date().toDateString()
-			      +' running ('+( self.cfg.isOpenShift ? 'OpenShift'
+			      +' ('+( self.cfg.isOpenShift ? 'OpenShift'
 								: 'standalone')
 			      +')'
 		});
 	});
 
+	self.wss = wss;
+
+	self.wss.on('connection', function connection(ws) {
+		// does not work...
+		// var location = url.parse(ws.upgradeReq.url, true);
+		var id = setInterval(function() {
+			var data = JSON.stringify(new Date());
+			console.log('sending data ...'+data);
+			ws.send(data, function() {  })
+		}, 1000);
+		console.log("websocket connection open")
+
+
+		ws.on('message', function incoming(message) {
+		    console.log('received: %s', message);
+		});
+
+		ws.on("close", function() {
+			console.log("websocket connection close")
+			clearInterval(id)
+		});
+	});
     };
 
 
@@ -120,8 +149,9 @@ var WebSocketApp = function() {
      *  Start the server (starts up the sample application).
      */
     self.start = function() {
+	server.on('request',self.app)
         //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
+        server.listen(self.port, self.ipaddress, function() {
             console.log('%s: Node server started on %s:%d ...',
                         Date(Date.now() ), self.ipaddress, self.port);
         });

@@ -1,7 +1,7 @@
 Future WebSocket example
 ========================
 
-**WARNING: this application is not finished yet!**
+**WARNING: This is work in progress (WIP)!**
 
 Example is available on: http://ws2-henryx.rhcloud.com/
 
@@ -86,7 +86,17 @@ rhc app-create ws2 nodejs-0.10
 cd ws2
 npm install
 npm install swig --save
+npm install ws --save
 ```
 
+Credits
+=======
+This sample is based on lot of code snippets including:
+
+* OpenShift node.js template
+* Swig setup: https://github.com/paularmstrong/swig/issues/353
+* Heroku WebSocket example: https://devcenter.heroku.com/articles/node-websockets
+* WebSocket browser detection: http://code.tutsplus.com/tutorials/start-using-html5-websockets-today--net-13270
+* Using express-ws: https://www.npmjs.com/package/express-ws
 
 
