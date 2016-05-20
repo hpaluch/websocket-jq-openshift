@@ -10,7 +10,12 @@
  </head>
  <body>
 	<h1>{{ title }}</h1>
+	<p>Demonstrations of WebSockets with node.js, Express, 
+	   Swig templates and jQuery.
+	   Please see <a href="https://github.com/hpaluch/websocket-jq-openshift">Source on GitHub</a>.
+	</p>
 
+	<h3>WebSocket data from <span id="wsInfo"></span></h3>
 	<ul id='wsData'></ul>
 
         <script src="{{ cfg.jquery_dir }}/js/jquery{{ cfg.min_suffix }}.js"></script>
@@ -23,11 +28,19 @@
 			}
 			document.myCounter = 0;
 			var host = location.origin.replace(/^http/, 'ws');
+{% if cfg.isOpenShift %}
+			// WebSockets must connect to port 8000 on OpenShift
+			var parser = document.createElement('a');
+		        parser.href = host;
+		        host = parser.protocol+"//"+parser.hostname+":8000";
+{% endif %}
+			$('#wsInfo').text(host);
+
 			var ws = new WebSocket(host);
 			ws.onmessage = function (event) {
                            var text = JSON.parse(event.data);
 			   $('#wsData').append(
-				$('<li>').text('Response #'+(document.myCounter++)+' '+text)
+				$('<li>').text('Response #'+(++document.myCounter)+' '+text)
 			   );
 			   var n = $('#wsData li').length;
 			   if ( n > 10 ){

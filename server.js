@@ -11,8 +11,6 @@ var url	     = require('url')
 var WebSocketServer = require("ws").Server
 var wss = new WebSocketServer({ server: server })
 
-console.log('URL: '+url.parse('http://www.linux.cz'));
-
 /**
  *  Define the sample application.
  */
@@ -115,7 +113,7 @@ var WebSocketApp = function() {
 		// var location = url.parse(ws.upgradeReq.url, true);
 		var id = setInterval(function() {
 			var data = JSON.stringify(new Date());
-			console.log('sending data ...'+data);
+			// console.log('sending data ...'+data);
 			ws.send(data, function() {  })
 		}, 1000);
 		console.log("websocket connection open")
