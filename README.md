@@ -1,6 +1,9 @@
 Future WebSocket example
 ========================
 
+**WARNING: this application is not finished yet!**
+
+Example is available on: http://ws2-henryx.rhcloud.com/
 
 
 Setup for Ubuntu Ubuntu 14.04.4 LTS
