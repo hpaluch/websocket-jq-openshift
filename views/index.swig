@@ -10,9 +10,9 @@
  </head>
  <body>
 	<h1>{{ title }}</h1>
-	<p>Demonstrations of WebSockets with node.js, Express, 
+	<p>Demo of WebSockets with node.js, Express, 
 	   Swig templates and jQuery.
-	   Please see <a href="https://github.com/hpaluch/websocket-jq-openshift">Source on GitHub</a>.
+	   Please see <a href="https://github.com/hpaluch/websocket-jq-openshift" target="github">Source on GitHub</a>.
 	</p>
 
 	<h3>WebSocket data from <span id="wsInfo"></span></h3>
