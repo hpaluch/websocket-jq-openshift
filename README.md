@@ -68,7 +68,7 @@ npm install
 ```shell
 npm start
 ```
-* open url [[http://localhost:5000]] in your browser
+* open url [http://localhost:5000] in your browser
 * to redeploy modified app to OpenShift use:
 ```shell
 git add .
