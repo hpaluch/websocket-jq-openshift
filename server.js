@@ -99,7 +99,8 @@ var WebSocketApp = function() {
 	self.app.get('/',function(req,res){
 		res.render('index', {
 			cfg: self.cfg,
-			title: 'WebSockets sample  '+new Date().toDateString()
+			serverDate: new Date().toDateString(),
+			title: 'WebSockets sample  '
 			      +' ('+( self.cfg.isOpenShift ? 'OpenShift'
 								: 'standalone')
 			      +')'
