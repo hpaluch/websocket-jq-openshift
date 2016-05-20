@@ -96,6 +96,12 @@ var WebSocketApp = function() {
         self.app.engine('swig', swig.renderFile);
         self.app.set('view engine', 'swig');
 
+	// disable template caching for development
+	if (!self.cfg.isOpenShift){
+		self.app.set('view cache', false);
+		swig.setDefaults({ cache: false });
+	}
+
 	self.app.get('/',function(req,res){
 		res.render('index', {
 			cfg: self.cfg,
