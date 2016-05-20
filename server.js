@@ -1,13 +1,15 @@
 #!/bin/env node
+// WebSocket example based on template:
 //  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
+var express  = require('express');
+var fs       = require('fs');
+var swig     = require('swig');
 
 
 /**
  *  Define the sample application.
  */
-var SampleApp = function() {
+var WebSocketApp = function() {
 
     //  Scope.
     var self = this;
@@ -21,38 +23,27 @@ var SampleApp = function() {
      *  Set up server IP address and port # using env variables/defaults.
      */
     self.setupVariables = function() {
+	self.cfg = {};
+	self.cfg.bootstrap_dir = 'bootstrap-3.3.6';
+	self.cfg.jquery_dir    = 'jquery-1.3.1';
+	self.cfg.min_suffix    =  '.min'; // '.min' for debug of css/js
+
+
         //  Set the environment variables we need.
         self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 5000;
+	self.cfg.isOpenShift = false;
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
             //  allows us to run/test the app locally.
             console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
             self.ipaddress = "127.0.0.1";
-        };
+        } else {
+	    self.cfg.isOpenShift = true;
+	    console.log('%s: OpenShift rutnime detected',Date(Date.now()));
+	};
     };
-
-
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
-
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
-
-
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
-
 
     /**
      *  terminator === the termination handler
@@ -90,35 +81,26 @@ var SampleApp = function() {
     /*  ================================================================  */
 
     /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
-
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
-
-
-    /**
      *  Initialize the server (express) and create the routes and register
      *  the handlers.
      */
     self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
+        self.app = express();
+	self.app.use ( express.static('public') );
+        // console.log('swig '+JSON.stringify(swig,null,4));
+        self.app.engine('swig', swig.renderFile);
+        self.app.set('view engine', 'swig');
 
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
+	self.app.get('/',function(req,res){
+		res.render('index', {
+			cfg: self.cfg,
+			title: 'WebSockets sample  '+new Date().toDateString()
+			      +' running ('+( self.cfg.isOpenShift ? 'OpenShift'
+								: 'standalone')
+			      +')'
+		});
+	});
+
     };
 
 
@@ -127,7 +109,6 @@ var SampleApp = function() {
      */
     self.initialize = function() {
         self.setupVariables();
-        self.populateCache();
         self.setupTerminationHandlers();
 
         // Create the express server and routes.
@@ -146,14 +127,14 @@ var SampleApp = function() {
         });
     };
 
-};   /*  Sample Application.  */
+};   /*  Web Socket Application.  */
 
 
 
 /**
  *  main():  Main code.
  */
-var zapp = new SampleApp();
+var zapp = new WebSocketApp();
 zapp.initialize();
 zapp.start();
 
