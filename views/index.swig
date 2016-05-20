@@ -15,12 +15,17 @@
 	  color: #777;
 	  border-top: 1px solid #e5e5e5;
 	}
+
+	body {
+	  padding-top: 70px;
+	  padding-bottom: 30px;
+	}
   </style>
  </head>
  <body>
 
-  <nav class="navbar navbar-default navbar-inverse">
-      <div class="container-fluid">
+  <nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
         <div class="navbar-header">
 	  <span class="navbar-brand">WebSocket Demo</span>
         </div>
@@ -32,25 +37,20 @@
       </div><!-- /.container-fluid -->
   </nav><!-- /.navbar -->
 
-  <div class="container">
-    <div class="row">
-      <div class="span12">
-	<div class="jumbotron">
-			<h1>{{ title }}</h1>
-			<p class="lead">Demo of WebSockets with node.js, Express, 
-			   Swig templates and jQuery.
-			</p>
-                        <p><a href="https://github.com/hpaluch/websocket-jq-openshift" target="github" class="btn btn-lg btn-success" role="button">Source on GitHub</a></p>
-	</div><!--/.jambotron-->
-
-     </div><!-- /.span12 -->
-   </div><!-- /.row -->
+  <div class="container" role="main">
+    <div class="jumbotron">
+      <h1>{{ title }}</h1>
+        <p class="lead">Demo of WebSockets with node.js, Express, 
+			   Swig templates and jQuery.</p>
+	<p><a href="https://github.com/hpaluch/websocket-jq-openshift" target="github" class="btn btn-lg btn-success" role="button">Source on GitHub</a></p>
+    </div><!--/.jambotron-->
 
     <div class="row">
       <div class="col-sm-6">
 <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">WebSocket data from <span id="wsInfo"></span></h3>
+              <h3 class="panel-title">
+		 WebSocket data from <span class="wsHost"></span></h3>
             </div>
             <div class="panel-body">
 		<ul id='wsData'>
@@ -66,13 +66,15 @@
       <div class="col-sm-6">
 <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Some future panel</h3>
+              <h3 class="panel-title">Status of <span class="wsHost"></span> connection</h3>
             </div>
             <div class="panel-body">
-		<p>Some future content</p>
+		<div class="alert alert-info" role="alert" id="conn_alert">
+		  Pending...
+	        </div>
             </div>
           </div>
-     </div><!-- /.span12 -->
+     </div><!-- /.col-sm-6 -->
  
    </div><!-- /.row -->
 
@@ -97,7 +99,7 @@
 		        parser.href = host;
 		        host = parser.protocol+"//"+parser.hostname+":8000";
 {% endif %}
-			$('#wsInfo').text(host);
+			$('.wsHost').text(host);
 
 			var ws = new WebSocket(host);
 			ws.onmessage = function (event) {
@@ -110,9 +112,26 @@
 				 // scroll up data to avoid memory/DOM leaks...
 				 $('#wsData li:first-child').remove();
 			   }
+			   // alert alert-success
+			   $('#conn_alert').text('Got data of '+text.length+' characters.');
 			};
 			ws.onclose = function (event) {
-				alert('WebSocket closed!');
+				// alert alert-danger
+				$('#conn_alert')
+					.attr('class','alert alert-danger')
+					.text('Connection closed!');
+			};
+			ws.onerror = function (event) {
+				// alert alert-danger
+				$('#conn_alert')
+					.attr('class','alert alert-danger')
+					.text('Connection error!');
+			};
+			ws.onopen = function (event) {
+				// alert alert-success
+				$('#conn_alert')
+					.attr('class','alert alert-success')
+					.text('Connection ready.');
 			};
 		});
 	</script>
