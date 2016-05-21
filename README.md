@@ -7,21 +7,39 @@ OpenShift Cloud.
 Live Example is available on: http://ws2-henryx.rhcloud.com/
 
 
-Setup for Ubuntu Ubuntu 14.04.4 LTS
------------------------------------
+Setup for Ubuntu 14.04.4 LTS
+----------------------------
+
+* On your ubuntu invoke:
 
 ```shell
 sudo apt-get install ruby-full build-essential git npm nodejs
+# install rhc only if you plan to use OpenShift containers
 sudo gem install rhc
 ```
 > NOTE: On same versions of Ubuntu there is missing link
 > /usr/bin/node -> nodejs.
-> In such case try:
+> You may try:
 
 ```shell
-sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+which node ||
+   sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 ```
-For the 1st time run:
+
+Setup for OpenShift (optional)
+------------------------------
+
+This application can be run both standalone (on your local computer)
+or in OpenShift container. Follow these instructions bellow
+to deploy this app on OpenShift:
+
+* Register on https://www.openshift.com/app/account/new
+  You get 3 small containers
+  for free (see https://www.openshift.com/pricing/plan-comparison.html
+  for more information)
+
+* For the 1st time then run:
+
 ```shell
 rhc setup
 # confirm hostname openshift.redhat.com <ENTER>
@@ -30,18 +48,18 @@ rhc setup
 # confirm upload of ssh key
 ```
 
-Then create directory for openshift projects:
+* Create directory for openshift projects:
 
 ```shell
 mkdir -p ~/projects/openshift
 ```
-Change working directory there
+* Change working directory there
 
 ```shell
 cd ~/projects/openshift
 ```
+* Create OpenShift NodeJs application from my GitHub repo using this command:
 
-Create OpenShift NodeJs application from my GitHub repo using this command:
 ```shell
 rhc app-create ws2 nodejs-0.10  --from-code https://github.com/hpaluch/websocket-jq-openshift.git
 ```
@@ -58,6 +76,18 @@ rhc app delete APP_NAME
 Your application should be successfully deployed on url like
 `http://ws2-YOUR_DOMAIN_PREFIX.rhcloud.com`
 
+Setup for standalone mode only
+------------------------------
+If you plan use this application without OpenShift then just issue these
+commands:
+
+```shell
+cd ~/my_projects_dirs
+git clone https://github.com/hpaluch/websocket-jq-openshift.git ws2
+```
+Follow next section:
+
+
 Development and Redeployment
 ---------------------------
 * Just enter `ws2` subdirectory and edit what needed
@@ -72,8 +102,7 @@ npm start
 * open url [http://localhost:5000] in your browser
 * to redeploy modified app to OpenShift use:
 ```shell
-git add .
-git commit -m "My modification"
+git commit -am "My modification"
 git push origin master
 ```
 
