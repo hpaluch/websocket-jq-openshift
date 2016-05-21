@@ -1,9 +1,10 @@
-Future WebSocket example
-========================
+WebSocket example
+=================
 
-**WARNING: This is work in progress (WIP)!**
+How to use WebSockets, Bootstrap, jQuery and node.js in RedHat's
+OpenShift Cloud.
 
-Example is available on: http://ws2-henryx.rhcloud.com/
+Live Example is available on: http://ws2-henryx.rhcloud.com/
 
 
 Setup for Ubuntu Ubuntu 14.04.4 LTS
